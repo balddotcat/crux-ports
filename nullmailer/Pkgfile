@@ -1,0 +1,34 @@
+# Description: Simple relay-only mail transport agent
+# URL: http://untroubled.org/nullmailer/
+# Packager: Elo Laszlo, hello at bald dot cat
+# Depends on: gnutls
+
+name=nullmailer
+version=2.1
+release=1
+source=(http://untroubled.org/${name}/${name}-${version}.tar.gz
+        nullmailer.rc pre-install)
+
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr \
+                --libexecdir=/usr/lib/$name \
+                --disable-largefile \
+                --enable-tls
+
+    make
+    make DESTDIR=$PKG install
+    make DESTDIR=$PKG install-root
+
+    mkdir -p $PKG/var/log
+    touch $PKG/var/log/nullmail
+    chown nullmail:daemon $PKG/var/log/nullmail
+
+    /bin/hostname > $PKG/usr/etc/nullmailer/me
+    touch $PKG/usr/etc/nullmailer/remotes
+
+    install -D \
+            --mode 755 \
+            $SRC/$name.rc \
+            $PKG/etc/rc.d/$name
+}

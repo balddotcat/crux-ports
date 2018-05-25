@@ -1,0 +1,24 @@
+# Description:	Portable version of OpenBSD's NTP implementation
+# URL:		http://www.openntpd.org/
+# Maintainer:	Elo Laszlo, hello at bald dot cat
+# Packager:	Matt Housh, jaeger at morpheus dot net
+
+name=openntpd
+version=6.2p3
+release=1
+source=(http://ftp.openbsd.org/pub/OpenBSD/OpenNTPD/$name-$version.tar.gz
+        ntpd.rc)
+
+build() {
+  cd $name-$version
+  ./configure --prefix=/usr \
+              --sysconfdir=/etc \
+              --localstatedir=/var \
+              --disable-https-constraint \
+              --with-privsep-user=ntp
+
+  make
+  make DESTDIR=$PKG install
+
+  install -D -m 0755 $SRC/ntpd.rc $PKG/etc/rc.d/ntpd
+}

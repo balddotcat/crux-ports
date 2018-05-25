@@ -1,0 +1,36 @@
+# Description: A Multiboot boot loader
+# URL: http://www.gnu.org/software/grub/
+# Maintainer: Elo Laszlo, hello at bald dot cat
+# Packager: Matt Housh, jaeger at crux dot ninja
+# Depends on: libdevmapper
+
+name=grub2
+version=2.02
+release=1
+source=(http://ftp.gnu.org/gnu/grub/grub-$version.tar.xz \
+  $name-00_header.diff $name-10_linux.diff grub.cfg.sample \
+  $name-intel-ucode.diff)
+
+build() {
+  export CFLAGS="${CFLAGS} -Wno-error"
+  cd grub-$version
+
+  # fix for glibc 'gets' removal
+  sed -i -e '/gets is a/d' grub-core/gnulib/stdio.in.h
+
+  patch -i $SRC/$name-00_header.diff util/grub.d/00_header.in
+  patch -i $SRC/$name-10_linux.diff util/grub.d/10_linux.in
+  patch -i $SRC/$name-intel-ucode.diff util/grub.d/10_linux.in
+
+  ./configure --prefix=/usr \
+    --sysconfdir=/etc \
+    --disable-efiemu \
+    --disable-grub-mkfont \
+    --disable-grub-themes \
+    --disable-grub-mount \
+    --enable-device-mapper
+  make
+  make DESTDIR=$PKG install
+  rm -rf $PKG/usr/share/{info,locale,grub/themes}
+  rm -rf $PKG/etc/bash_completion.d
+}

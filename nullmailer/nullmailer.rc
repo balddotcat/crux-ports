@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# /etc/rc.d/nullmailer: start/stop the nullmailer daemon
+#
+
+SSD=/sbin/start-stop-daemon
+DAEMON=/usr/sbin/nullmailer-send
+DAEMONUSER=nullmail
+PID=/var/run/nullmailer.pid
+LOGFILE=/var/log/nullmail
+
+case $1 in
+    "start")
+        $SSD --start \
+             --chuid $DAEMONUSER \
+             --make-pidfile \
+             --pidfile $PID \
+             --background \
+             --startas /bin/bash \
+             -- -c "exec $DAEMON >> $LOGFILE 2>&1"
+        ;;
+    "stop")
+        $SSD --stop \
+             --retry 10 \
+             --chuid $DAEMONUSER \
+             --pidfile $PID \
+             --remove-pidfile
+        ;;
+    "restart")
+        $0 stop
+        $0 start
+        ;;
+    "status")
+        $SSD --status --pidfile $PID
+        case $? in
+            0)
+                echo "$DAEMON is running with pid $(cat $PID)"
+                ;;
+            1)
+                echo "$DAEMON is not running but pid file $PID exists"
+                ;;
+            3)
+                echo "$DAEMON is not running"
+                ;;
+            4)
+                echo "Unable to determine program status"
+                ;;
+        esac
+        ;;
+    *)
+        echo "Usage: $0 [start|stop|restart|status]"
+        ;;
+esac
