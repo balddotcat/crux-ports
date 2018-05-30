@@ -1,0 +1,28 @@
+# Description: FireHOL, an iptables stateful packet filtering firewall for humans!
+# URL: http://firehol.org
+# Packager: Elo Laszlo, hello at bald dot cat
+# Depends on: iprange
+
+name=firehol
+version=3.1.5
+release=1
+source=(https://github.com/firehol/firehol/releases/download/v$version/$name-$version.tar.gz)
+
+build () {
+    cd $name-$version
+    ./configure --prefix=/usr/$name \
+                --sbindir=/usr/sbin \
+                --sysconfdir=/usr/etc \
+                --libexecdir=/usr/lib/$name \
+                --datarootdir=/usr/share \
+                --enable-doc=no \
+                --disable-fireqos \
+                --disable-link-balancer \
+                --disable-update-ipsets \
+                --disable-vnetbuild \
+                --disable-ipv6
+    make
+    make DESTDIR=$PKG install
+
+    rm -r ${PKG}/usr/share/doc
+}

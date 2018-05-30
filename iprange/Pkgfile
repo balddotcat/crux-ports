@@ -1,0 +1,17 @@
+# Description: manage IP ranges
+# URL: http://firehol.org
+# Packager: Elo Laszlo, hello at bald dot cat
+
+name=iprange
+version=1.0.4
+release=1
+source=(https://github.com/firehol/iprange/releases/download/v$version/$name-$version.tar.gz)
+
+build () {
+    cd $name-$version
+    ./configure --prefix=/usr/$name \
+                --bindir=/usr/bin \
+                --datarootdir=/usr/share
+    make
+    make DESTDIR=$PKG install
+}
