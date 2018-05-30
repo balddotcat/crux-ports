@@ -1,6 +1,6 @@
 # Description: An HTTP and reverse proxy server
 # URL: http://nginx.org
-# Maintainer: Elo Laszlo, hello at bald dot cat
+# Packager: Elo Laszlo, hello at bald dot cat
 # Depends on: libpcre zlib
 
 name=nginx
