@@ -1,0 +1,8 @@
+#
+# /etc/ports/baldcat.httpup: bald.cat's port collection
+#
+
+ROOT_DIR=/usr/ports/baldcat
+URL=https://raw.githubusercontent.com/balddotcat/crux-ports/master/
+
+# End of file
