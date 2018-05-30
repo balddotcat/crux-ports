@@ -1,0 +1,16 @@
+# Description: interface to the Linux Kernel's syscall filtering mechanism
+# URL: https://github.com/seccomp/libseccomp
+# Packager:	Elo Laszlo, hello at bald dot cat
+
+name=libseccomp
+version=2.3.3
+release=1
+source=(https://github.com/seccomp/libseccomp/releases/download/v$version/$name-$version.tar.gz)
+
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr
+
+    make
+    make DESTDIR=$PKG install
+}

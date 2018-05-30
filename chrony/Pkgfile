@@ -1,0 +1,36 @@
+# Description: network time protocol client
+# URL: https://chrony.tuxfamily.org/
+# Packager:	Elo Laszlo, hello at bald dot cat
+# Depends on: libcap libseccomp
+
+name=chrony
+version=3.3
+release=1
+source=(https://download.tuxfamily.org/chrony/$name-$version.tar.gz
+        post-install $name.rc $name.conf)
+
+build() {
+    cd $name-$version
+    ./configure --prefix=/usr \
+                --with-user=chrony \
+                --enable-scfilter
+    make
+    make DESTDIR=$PKG install
+
+    install -D \
+            --mode 755 \
+            $SRC/$name.rc \
+            $PKG/etc/rc.d/$name
+
+    install -D \
+            --mode 755 \
+            $SRC/$name.conf \
+            $PKG/etc/$name.conf
+
+    install -D \
+            --owner $name \
+            --group daemon \
+            --mode 750 \
+            /dev/null \
+            $PKG/var/lib/$name/drift.tmp
+}

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+ADD_USER=chrony
+ADD_USER_SHELL=/bin/false
+
+set -x -u -e
+
+/usr/sbin/useradd --system --shell $ADD_USER_SHELL --gid daemon $ADD_USER
